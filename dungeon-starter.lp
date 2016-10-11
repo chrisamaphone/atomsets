@@ -39,21 +39,11 @@ complete
 
 :- not complete.
 
-%% Indirect reachability
-indirectly_reachable((X, Y), (X', Y')) :-
-  at(X', Y', lock),
-  reachable_from((X, Y), (Xk,Yk)),
-  at(Xk, Yk, key).
-
-reachable_from(Source, (X, Y)) :-
-  indirectly_reachable(Source, (X, Y)).
+%% To do in class: indirect reachability
 
 %% Additional things to try:
 %% 0. Brainstorm some improvements to add to this list.
-%% 1. Add key/lock constraints that create "balanced" maps
-%% 2. Rule out trivially-solvable maps.
-%% 3. Improve the definition of reachability (time-indexing?)
-%%    to ensure a map is always solvable.
+
 
 
 %% Uncomment these to test whether the current constraints admit:
