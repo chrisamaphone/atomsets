@@ -47,7 +47,7 @@ new_row   : on_row (s Y) * on_col 0 * $make_cols C
 
 done : on_col _ * on_row z * make_cols _ -o ().
 
-}
+} #interactive generate.
 
 #trace _ generate init.
 
