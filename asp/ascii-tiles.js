@@ -52,10 +52,15 @@ function tokenize(s) {
   for (var i = 0; i < preds.length; i++) {
     var pred_args = preds[i].split(/\s*\(|\)\s*/);
     var pred = pred_args[0];
-    if (pred_args[1] != undefined) {
-      var args = pred_args[1].split(/\s*\,\s*/);
-    } else {args = [] }
-
+    var args = [];
+    for(var j=1; j < pred_args.length; j++) {
+      if(pred_args[j] != undefined && pred_args[j] != "") {
+        var terms = pred_args[j].split(/\s*\,\s*/);
+        for(var k=0; k < terms.length; k++) {
+          if(terms[k] != "") args.push(terms[k]);
+        } // looping over terms within arguments
+      } // looping over predicate arguments
+    } // looping over atoms
     tokens.push({pred: pred, args: args});
   }
   return tokens;
@@ -67,7 +72,7 @@ function atoms_to_tiles(atoms) {
   var m = [];
   for (var i = 0; i < atoms.length; i++) {
     var p = atoms[i].pred;
-    if (p == "at") {
+    if (p == "sprite" || p == "at") {
       var args = atoms[i].args;
       var x = parseInt(args[0], 10);
       var y = parseInt(args[1], 10);
@@ -76,6 +81,8 @@ function atoms_to_tiles(atoms) {
       if(y > max_y) { max_y = y; }
       var entity = args[2];
       if(entity == undefined) {
+        console.log("Atom number " + i);
+        console.log("Args: " + args.toString());
         console.log("Undefined entity at "+x+", "+y+"!");
       }
       if(m[x] == undefined){
@@ -92,16 +99,15 @@ function atoms_to_tiles(atoms) {
 }
 
 
-var source = "at(0,0,player) at(0,1,floor) at(0,2,water) at(1,0,key) at(1,1,floor) at(1,2,door) at(2,0,floor) at(2,1,floor) at(2,2,water)"
+var source = "at(0,0,player) at(0,1,wall) at(0,2,gem) at(1,0,gem) at(1,1,wall) at(2,0,wall)  at(2,2,gem)"
 
 
 token_table = 
 { "player": "@", 
-  "floor":".", 
-  "key":"*", 
-  "door":"]",
-  "water":"#",
-  "lock":"x"
+  "wall":"W", 
+  "gem":"*",
+  "altar":"A",
+  "":"."
 }
 
 // expects m[i][j] = "token" where "token" is a key in the table
@@ -115,10 +121,10 @@ function draw_map(m, width, height) {
         var ch = token_table[entity];
         mapstring += ch;
         if(ch == undefined) {
-          console.log("Unable to find a char for "+entity);
+          console.log("Unable to find a char for ["+entity+"]");
         }
       } else {
-        mapstring += " "
+        mapstring += "."
       }
     }
     mapstring+="\n";
